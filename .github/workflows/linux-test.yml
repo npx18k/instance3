@@ -32,11 +32,15 @@ jobs:
         AUTHCODE: ${{ github.event.inputs.authcode }}
         PINCODE: ${{ github.event.inputs.pincode }}
       run: |
-        # Set up CRD virtual desktop environment
+        # Configure Xfce as the default desktop environment for CRD
         sudo bash -c 'echo "exec /usr/bin/xfce4-session" > /etc/chrome-remote-desktop-session'
         
-        # Register the machine with CRD and set the pincode
-        /opt/google/chrome-remote-desktop/chrome-remote-desktop --start-host --code="$AUTHCODE" --redirect-url="https://remotedesktop.google.com/" --name="GitHub Ubuntu Remote Access" --pin="$PINCODE"
+        # Add the current user to the CRD group
+        sudo usermod -a -G chrome-remote-desktop $USER
+
+        # Authenticate and set up Chrome Remote Desktop
+        # This command uses the AUTHCODE and PINCODE for initial setup
+        DISPLAY= /opt/google/chrome-remote-desktop/start-host --code="$AUTHCODE" --redirect-url="https://remotedesktop.google.com/" --name="GitHub Ubuntu Remote Access" --pin="$PINCODE"
 
     - name: Keep Session Active
       run: |
