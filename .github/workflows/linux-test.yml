@@ -1,0 +1,45 @@
+name: launch-ubuntu-and-windows
+
+on: 
+  workflow_dispatch:
+    inputs:
+      authcode:
+        description: 'Link'
+        required: true
+      pincode:
+        description: '6-digit pincode'
+        required: true
+
+jobs:
+  ubuntu-remote-access:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Install Chrome Remote Desktop
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y wget
+        wget https://dl.google.com/linux/direct/chrome-remote-desktop_current_amd64.deb
+        sudo apt install ./chrome-remote-desktop_current_amd64.deb -y
+    - name: Run CRD setup
+      run: |
+        echo "${{ github.event.inputs.authcode }}" -pin=${{ github.event.inputs.pincode }}
+    - name: Timeout
+      run: |
+        while true; do
+          echo "Running..."; sleep 9999
+        done
+
+  windows-setup:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run main.ps1
+      run: ./main.ps1
+    - name: CRD
+      run: ${{ github.event.inputs.authcode }} -pin=${{ github.event.inputs.pincode }}
+    - name: Timeout
+      run: ./timeout.ps1
+      env:
+        ARGS: "-av"
