@@ -1,0 +1,28 @@
+name: launch-windows
+
+on: 
+  workflow_dispatch:
+    inputs:
+      authcode:
+        description: 'Link'
+        required: true
+      pincode:
+        description: '6-digit pincode'
+        required: true
+  
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run main.ps1
+      run: ./main.ps1
+    - name: CRD
+      run: ${{ github.event.inputs.authcode }} -pin=${{ github.event.inputs.pincode }}
+    - name: Install programs
+      run: ./download.ps1
+    - name: Timeout
+      run: ./timeout.ps1
+      env:
+        ARGS: "-av"
