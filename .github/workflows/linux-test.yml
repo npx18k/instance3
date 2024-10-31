@@ -1,4 +1,4 @@
-name: launch-ubuntu-and-windows
+name: launch-ubuntu
 
 on: 
   workflow_dispatch:
@@ -21,25 +21,13 @@ jobs:
         sudo apt-get install -y wget
         wget https://dl.google.com/linux/direct/chrome-remote-desktop_current_amd64.deb
         sudo apt install ./chrome-remote-desktop_current_amd64.deb -y
-    - name: Run CRD setup
+        
+    - name: Configure Chrome Remote Desktop
       run: |
         echo "${{ github.event.inputs.authcode }}" -pin=${{ github.event.inputs.pincode }}
-    - name: Timeout
+
+    - name: Keep Session Active
       run: |
         while true; do
-          echo "Running..."; sleep 9999
+          echo "Session is active"; sleep 3600
         done
-
-  windows-setup:
-    runs-on: windows-latest
-
-    steps:
-    - uses: actions/checkout@v2
-    - name: Run main.ps1
-      run: ./main.ps1
-    - name: CRD
-      run: ${{ github.event.inputs.authcode }} -pin=${{ github.event.inputs.pincode }}
-    - name: Timeout
-      run: ./timeout.ps1
-      env:
-        ARGS: "-av"
