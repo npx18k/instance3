@@ -1,10 +1,10 @@
-name: Launch Ubuntu SSH
+name: Launch Ubuntu SSH with Guacamole
 
 on:
-  workflow_dispatch:
+  workflow_dispatch: # Allows manual triggering of the workflow
 
 jobs:
-  setup-ssh:
+  setup-ssh-and-guacamole:
     runs-on: ubuntu-latest
     steps:
       - name: Set up SSH server
@@ -14,7 +14,37 @@ jobs:
           sudo systemctl start ssh
           echo "AllowTcpForwarding yes" | sudo tee -a /etc/ssh/sshd_config
           echo "GatewayPorts yes" | sudo tee -a /etc/ssh/sshd_config
-          sudo systemctl restart ssh
+          sudo systemctl restart sshd
+
+      - name: Install Guacamole dependencies
+        run: |
+          sudo apt-get install -y openjdk-11-jre
+          sudo apt-get install -y tomcat9 tomcat9-admin tomcat9-common
+          sudo apt-get install -y guacamole
+          
+          # Additional Guacamole dependencies (may vary)
+          sudo apt-get install -y libtomcat9-java
+
+      - name: Download and set up Guacamole
+        run: |
+          wget https://www.apache.org/dyn/closer.cgi?path=/guacamole/1.5.2/guacamole-1.5.2.war -O guacamole.war
+          sudo mv guacamole.war /var/lib/tomcat9/webapps/
+
+      - name: Configure Guacamole to use SSH
+        run: |
+          echo "guacamole.properties" > /etc/guacamole/guacamole.properties
+          echo "ssh-hostname: localhost" >> /etc/guacamole/guacamole.properties
+          echo "ssh-port: 22" >> /etc/guacamole/guacamole.properties
+          echo "ssh-username: runner" >> /etc/guacamole/guacamole.properties
+          echo "ssh-private-key-path: ~/.ssh/id_rsa" >> /etc/guacamole/guacamole.properties
+
+      - name: Install LocalTunnel for SSH port forwarding
+        run: |
+          npm install -g localtunnel
+
+      - name: Start LocalTunnel for SSH
+        run: |
+          lt --port 8080 --subdomain ssh-your-unique-subdomain
 
       - name: Add public SSH key from GitHub Secrets
         run: |
@@ -26,8 +56,15 @@ jobs:
       - name: Output SSH connection details
         run: |
           echo "SSH server is running. To connect, use your private key."
+          echo "Example command:"
+          echo "ssh -i <path-to-your-private-key> runner@<GitHub-host-or-IP>"
+
+      - name: Output Guacamole URL
+        run: |
+          echo "Guacamole is running. To connect, use the following URL:"
+          echo "http://<LocalTunnel-public-url>:8080/guacamole"
 
       - name: Prevent timeout (Keep machine alive)
         run: |
-          echo "Runner will stay alive for the next 4 hour..."
-          sleep 14400
+          echo "Runner will stay alive for the next 1 hour..."
+          sleep 3600 # Timeout: 1 hour (in seconds)
