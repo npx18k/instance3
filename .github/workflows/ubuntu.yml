@@ -14,7 +14,7 @@ jobs:
           sudo systemctl start ssh
           echo "AllowTcpForwarding yes" | sudo tee -a /etc/ssh/sshd_config
           echo "GatewayPorts yes" | sudo tee -a /etc/ssh/sshd_config
-          sudo systemctl restart sshd
+          sudo systemctl restart ssh
 
       - name: Install Guacamole dependencies
         run: |
