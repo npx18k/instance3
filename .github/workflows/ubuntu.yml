@@ -1,40 +1,33 @@
-name: launch-ubuntu
+name: Launch Ubuntu SSH
 
-on: 
+on:
   workflow_dispatch:
-    inputs:
-      authcode:
-        description: 'Chrome Remote Desktop auth code'
-        required: true
-      pincode:
-        description: '6-digit Chrome Remote Desktop PIN'
-        required: true
-  
+
 jobs:
-  build:
+  setup-ssh:
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v2
+      - name: Set up SSH server
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y openssh-server
+          sudo systemctl start ssh
+          echo "AllowTcpForwarding yes" | sudo tee -a /etc/ssh/sshd_config
+          echo "GatewayPorts yes" | sudo tee -a /etc/ssh/sshd_config
+          sudo systemctl restart sshd
 
-    - name: Install XFCE4 and Chrome Remote Desktop
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y xfce4 xfce4-goodies
-        wget https://dl.google.com/linux/direct/chrome-remote-desktop_current_amd64.deb
-        sudo dpkg -i chrome-remote-desktop_current_amd64.deb || sudo apt-get -f install -y
-        
-        sudo systemctl unmask chrome-remote-desktop
-        sudo systemctl enable chrome-remote-desktop
+      - name: Add public SSH key from GitHub Secrets
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PUBLIC_KEY }}" > ~/.ssh/authorized_keys
+          chmod 600 ~/.ssh/authorized_keys
+          echo "SSH public key added"
 
-    - name: Configure Chrome Remote Desktop
-      run: |
-        echo "exec /usr/bin/xfce4-session" > ~/.chrome-remote-desktop-session
-        chmod +x ~/.chrome-remote-desktop-session
-        export DISPLAY=:0
-        /opt/google/chrome-remote-desktop/start-host --code="${{ github.event.inputs.authcode }}" --pin="${{ github.event.inputs.pincode }}"
+      - name: Output SSH connection details
+        run: |
+          echo "SSH server is running. To connect, use your private key."
 
-    - name: Keep Workflow Running
-      run: |
-        echo "Workflow will keep running."
-        sleep infinity
+      - name: Prevent timeout (Keep machine alive)
+        run: |
+          echo "Runner will stay alive for the next 1 hour..."
+          sleep 14400
