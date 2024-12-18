@@ -24,7 +24,6 @@ jobs:
         wget https://dl.google.com/linux/direct/chrome-remote-desktop_current_amd64.deb
         sudo dpkg -i chrome-remote-desktop_current_amd64.deb || sudo apt-get -f install -y
         
-        # Размаскировка службы
         sudo systemctl unmask chrome-remote-desktop
         sudo systemctl enable chrome-remote-desktop
 
