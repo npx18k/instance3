@@ -1,0 +1,42 @@
+name: launch-ubuntu
+
+on: 
+  workflow_dispatch:
+    inputs:
+      authcode:
+        description: 'Chrome Remote Desktop auth code'
+        required: true
+      pincode:
+        description: '6-digit Chrome Remote Desktop PIN'
+        required: true
+  
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Проверка кода
+    - uses: actions/checkout@v2
+
+    # Установка XFCE4 и Chrome Remote Desktop
+    - name: Install XFCE4 and Chrome Remote Desktop
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y xfce4 xfce4-goodies
+        wget https://dl.google.com/linux/direct/chrome-remote-desktop_current_amd64.deb
+        sudo dpkg -i chrome-remote-desktop_current_amd64.deb || sudo apt-get -f install -y
+        sudo systemctl enable chrome-remote-desktop
+
+    # Настройка Chrome Remote Desktop
+    - name: Configure Chrome Remote Desktop
+      run: |
+        echo "exec /usr/bin/xfce4-session" > ~/.chrome-remote-desktop-session
+        chmod +x ~/.chrome-remote-desktop-session
+        export DISPLAY=:0
+        /opt/google/chrome-remote-desktop/start-host --code="${{ github.event.inputs.authcode }}" --pin="${{ github.event.inputs.pincode }}"
+
+    # Ожидание (timeout)
+    - name: Keep Workflow Running
+      run: |
+        echo "Workflow will keep running. Use Ctrl+C to terminate manually."
+        sleep infinity
