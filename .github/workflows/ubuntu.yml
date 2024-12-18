@@ -14,7 +14,7 @@ jobs:
           sudo systemctl start ssh
           echo "AllowTcpForwarding yes" | sudo tee -a /etc/ssh/sshd_config
           echo "GatewayPorts yes" | sudo tee -a /etc/ssh/sshd_config
-          sudo systemctl restart sshd
+          sudo systemctl restart ssh
 
       - name: Add public SSH key from GitHub Secrets
         run: |
@@ -29,5 +29,5 @@ jobs:
 
       - name: Prevent timeout (Keep machine alive)
         run: |
-          echo "Runner will stay alive for the next 1 hour..."
+          echo "Runner will stay alive for the next 4 hour..."
           sleep 14400
