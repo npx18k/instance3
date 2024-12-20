@@ -1,6 +1,6 @@
 # Define variables
 $PaperProject = "paper"
-$MinecraftVersion = "1.21.1"  # Replace with the desired Minecraft version
+$MinecraftVersion = "1.20.1"  # Replace with the desired Minecraft version
 $ServerDir = "$env:USERPROFILE\Desktop\server"
 $TempDir = "$env:TEMP\minecraft_setup"
 $TemurinMsiUrl = "https://github.com/adoptium/temurin23-binaries/releases/download/jdk-23.0.1%2B11/OpenJDK23U-jre_x64_windows_hotspot_23.0.1_11.msi"
@@ -16,14 +16,19 @@ Invoke-WebRequest -Uri $TemurinMsiUrl -OutFile $TemurinMsiPath
 Start-Process -FilePath msiexec.exe -ArgumentList "/i `"$TemurinMsiPath`" /quiet /norestart" -Wait
 Remove-Item -Path $TemurinMsiPath -Force
 
-# Fetch the latest PaperMC build
+# Fetch the latest PaperMC build using curl
 $PaperApiUrl = "https://api.papermc.io/v2/projects/$PaperProject/versions/$MinecraftVersion/builds"
-$LatestBuild = (Invoke-RestMethod -Uri $PaperApiUrl).builds | Sort-Object | Select-Object -Last 1
+$LatestBuild = (curl.exe -s $PaperApiUrl | ConvertFrom-Json).builds | Sort-Object | Select-Object -Last 1
 if ($null -ne $LatestBuild) {
     $JarName = "$PaperProject-$MinecraftVersion-$LatestBuild.jar"
     $PaperDownloadUrl = "https://api.papermc.io/v2/projects/$PaperProject/versions/$MinecraftVersion/builds/$LatestBuild/downloads/$JarName"
-    Invoke-WebRequest -Uri $PaperDownloadUrl -OutFile "$ServerDir\server.jar"
-    Write-Host "PaperMC server.jar downloaded successfully."
+    & curl.exe -o "$ServerDir\server.jar" $PaperDownloadUrl
+    if (Test-Path "$ServerDir\server.jar") {
+        Write-Host "PaperMC server.jar downloaded successfully."
+    } else {
+        Write-Host "Failed to download PaperMC server.jar."
+        exit 1
+    }
 } else {
     Write-Host "No stable build found for Minecraft version $MinecraftVersion."
     exit 1
