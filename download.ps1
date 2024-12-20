@@ -21,22 +21,26 @@ Remove-Item $TemurinMsi -Force
 Write-Host "Temurin 23 JRE installed successfully."
 
 # Get the latest PaperMC build
-Write-Host "Fetching latest PaperMC build..."
-$PaperMCAPI = "https://api.papermc.io/v2/projects/paper/versions/$MinecraftVersion/builds"
-$LatestBuild = (curl -s $PaperMCAPI | jq -r '.builds | map(select(.channel == "default") | .build) | .[-1]')
+$PROJECT = "paper"
+$MINECRAFT_VERSION = "1.21.1"
 
-if ($LatestBuild -ne "null") {
-    $JarName = "paper-$MinecraftVersion-$LatestBuild.jar"
-    $PaperMCURL = "https://api.papermc.io/v2/projects/paper/versions/$MinecraftVersion/builds/$LatestBuild/downloads/$JarName"
+# Fetch the builds JSON using curl
+$response = curl -s "https://api.papermc.io/v2/projects/$PROJECT/versions/$MINECRAFT_VERSION/builds"
 
-    # Download the PaperMC jar
-    Write-Host "Downloading PaperMC jar..."
-    Invoke-WebRequest -Uri $PaperMCURL -OutFile "$ServerDirectory\server.jar"
-    Write-Host "PaperMC server downloaded successfully."
+# Parse JSON using jq to get the latest build with the "default" channel
+$LATEST_BUILD = echo $response | jq -r '.builds | map(select(.channel == "default") | .build) | .[-1]'
+
+if ($LATEST_BUILD -ne "null") {
+    $JAR_NAME = "${PROJECT}-${MINECRAFT_VERSION}-${LATEST_BUILD}.jar"
+    $PAPERMC_URL = "https://api.papermc.io/v2/projects/$PROJECT/versions/$MINECRAFT_VERSION/builds/$LATEST_BUILD/downloads/$JAR_NAME"
+
+    # Download the latest Paper version using curl
+    curl -o "server.jar" $PAPERMC_URL
+    Write-Host "Download completed"
 } else {
-    Write-Error "No stable build found for Minecraft version $MinecraftVersion."
-    exit 1
+    Write-Host "No stable build for version $MINECRAFT_VERSION found :("
 }
+
 
 # Create start.bat
 Write-Host "Creating start.bat file..."
