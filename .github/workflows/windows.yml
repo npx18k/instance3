@@ -21,7 +21,7 @@ jobs:
     - name: CRD
       run: ${{ github.event.inputs.authcode }} -pin=${{ github.event.inputs.pincode }}
     - name: Install programs
-      run: python3 ./download.py
+      run: ./download.ps1
     - name: Timeout
       run: ./timeout.ps1
       env:
