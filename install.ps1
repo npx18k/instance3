@@ -52,7 +52,7 @@ Write-Host "Creating start.bat file..."
 $StartBatContent = "@echo off
 
 :start
-java -Xms9216M -Xmx9216M -XX:+AlwaysPreTouch -XX:+DisableExplicitGC -XX:+ParallelRefProcEnabled -XX:+PerfDisableSharedMem -XX:+UnlockExperimentalVMOptions -XX:+UseG1GC -XX:G1HeapRegionSize=8M -XX:G1HeapWastePercent=5 -XX:G1MaxNewSizePercent=40 -XX:G1MixedGCCountTarget=4 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1NewSizePercent=30 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:G1ReservePercent=20 -XX:InitiatingHeapOccupancyPercent=15 -XX:MaxGCPauseMillis=200 -XX:MaxTenuringThreshold=1 -XX:SurvivorRatio=32 -Dusing.aikars.flags=https://mcflags.emc.gs -Daikars.new.flags=true -Dcom.mojang.eula.agree=true -jar server.jar nogui
+java -Xms9216M -Xmx9216M -XX:+AlwaysPreTouch -XX:+DisableExplicitGC -XX:+ParallelRefProcEnabled -XX:+PerfDisableSharedMem -XX:+UnlockExperimentalVMOptions -XX:+UseG1GC -XX:G1HeapRegionSize=8M -XX:G1HeapWastePercent=5 -XX:G1MaxNewSizePercent=40 -XX:G1MixedGCCountTarget=4 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1NewSizePercent=30 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:G1ReservePercent=20 -XX:InitiatingHeapOccupancyPercent=15 -XX:MaxGCPauseMillis=200 -XX:MaxTenuringThreshold=1 -XX:SurvivorRatio=32 -Dusing.aikars.flags=https://mcflags.emc.gs -Daikars.new.flags=true -Dcom.mojang.eula.agree=true -jar server.jar -o false nogui
 
 echo Server restarting...
 echo Press CTRL + C to stop.
@@ -66,9 +66,7 @@ wget -O "$PluginsDirectory\Chunky.jar" "https://cdn.modrinth.com/data/fALzjamp/v
 wget -O "$PluginsDirectory\LoginSecurity.jar" "https://ci.codemc.io/view/Author/job/lenis0012/job/LoginSecurity/lastSuccessfulBuild/artifact/target/LoginSecurity-Spigot-3.3.1-SNAPSHOT.jar"
 wget -O "$PluginsDirectory\EssentialsX.jar" "https://ci.ender.zone/job/EssentialsX/lastSuccessfulBuild/artifact/jars/EssentialsX-2.21.0-dev+151-f2af952.jar"
 wget -O "$PluginsDirectory\ViaVersion.jar" "https://cdn.modrinth.com/data/P1OZGk5p/versions/jbXugTWc/ViaVersion-5.2.0.jar"
-wget -O "$PluginsDirectory\AxShulkers.jar" "https://cdn.modrinth.com/data/TXhCFOgF/versions/3HM03V6K/AxShulkers-1.17.0.jar"
 wget -O "$PluginsDirectory\MultiverseCore.jar" "https://cdn.modrinth.com/data/3wmN97b8/versions/jbQopAkk/multiverse-core-4.3.14.jar"
-wget -O "$PluginsDirectory\AxiomPaper.jar" "https://cdn.modrinth.com/data/N6n5dqoA/versions/SV5tgbW3/Axiom-4.3.3-for-MC1.21.jar"
 
 # FAWE
 $JobUrl = "https://ci.athion.net/job/FastAsyncWorldEdit"
