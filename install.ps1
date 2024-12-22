@@ -8,14 +8,14 @@ if (-Not (Test-Path -Path $ServerDirectory)) {
     Write-Host "Created server directory at $ServerDirectory"
 }
 
-# Install jq
-Write-Host "Installing jq via Chocolatey..."
-choco install jq -y
+# Install necessary tools via Chocolatey
+Write-Host "Installing required tools via Chocolatey..."
+choco install jq wget -y
 
 # Install Temurin 23 JRE in silent mode
 Write-Host "Downloading and installing Temurin 23 JRE..."
 $TemurinMsi = "$env:TEMP\temurin23.msi"
-Invoke-WebRequest -Uri "https://github.com/adoptium/temurin23-binaries/releases/download/jdk-23.0.1%2B11/OpenJDK23U-jre_x64_windows_hotspot_23.0.1_11.msi" -OutFile $TemurinMsi
+wget -O $TemurinMsi "https://github.com/adoptium/temurin23-binaries/releases/download/jdk-23.0.1%2B11/OpenJDK23U-jre_x64_windows_hotspot_23.0.1_11.msi"
 Start-Process msiexec.exe -ArgumentList "/i $TemurinMsi /quiet /norestart" -NoNewWindow -Wait
 Remove-Item $TemurinMsi -Force
 Write-Host "Temurin 23 JRE installed successfully."
@@ -35,12 +35,11 @@ if ($LATEST_BUILD -ne "null") {
     $PAPERMC_URL = "https://api.papermc.io/v2/projects/$PROJECT/versions/$MINECRAFT_VERSION/builds/$LATEST_BUILD/downloads/$JAR_NAME"
 
     # Download the latest Paper version using curl
-    curl -o "server.jar" $PAPERMC_URL
+    curl -o "$ServerDirectory\server.jar" $PAPERMC_URL
     Write-Host "Download completed"
 } else {
     Write-Host "No stable build for version $MINECRAFT_VERSION found :("
 }
-
 
 # Create start.bat
 Write-Host "Creating start.bat file..."
