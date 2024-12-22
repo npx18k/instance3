@@ -1,6 +1,2 @@
-$i = 99999
-do {
-    Write-Host $i
-    Sleep 99999
-    $i--
-} while ($i -gt 0)
+$timeout = 6 * 60 * 60
+Start-Sleep -Seconds $timeout
