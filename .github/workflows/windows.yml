@@ -21,7 +21,7 @@ jobs:
     - name: Specify data for CRD.
       run: ${{ github.event.inputs.authcode }} -pin=${{ github.event.inputs.pincode }}
     - name: Install the required software
-      run: ./download.ps1
+      run: ./install.ps1
     - name: Timeout script
       run: ./timeout.ps1
       env:
