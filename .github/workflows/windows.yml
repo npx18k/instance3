@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       authcode:
-        description: 'Link'
+        description: 'CRD link'
         required: true
       pincode:
         description: '6-digit pincode'
@@ -16,13 +16,13 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Run main.ps1
-      run: ./main.ps1
-    - name: CRD
+    - name: Setup the CRD
+      run: ./setup.ps1
+    - name: Specify data for CRD.
       run: ${{ github.event.inputs.authcode }} -pin=${{ github.event.inputs.pincode }}
-    - name: Install programs
+    - name: Install the required software
       run: ./download.ps1
-    - name: Timeout
+    - name: Timeout script
       run: ./timeout.ps1
       env:
         ARGS: "-av"
