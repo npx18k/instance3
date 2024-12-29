@@ -67,7 +67,9 @@ wget -O "$PluginsDirectory\LoginSecurity.jar" "https://ci.codemc.io/view/Author/
 wget -O "$PluginsDirectory\EssentialsX.jar" "https://ci.ender.zone/job/EssentialsX/lastSuccessfulBuild/artifact/jars/EssentialsX-2.21.0-dev+151-f2af952.jar"
 wget -O "$PluginsDirectory\ViaVersion.jar" "https://cdn.modrinth.com/data/P1OZGk5p/versions/jbXugTWc/ViaVersion-5.2.0.jar"
 wget -O "$PluginsDirectory\MultiverseCore.jar" "https://cdn.modrinth.com/data/3wmN97b8/versions/jbQopAkk/multiverse-core-4.3.14.jar"
-
+wget -O "$PluginsDirectory\TerraPlusMinus.jar" "https://github.com/BTE-Germany/TerraPlusMinus/releases/download/v1.4.0/terraplusminus-1.4.0.jar"
+wget -O "$PluginsDirectory\WorldGuard.jar" "https://dev.bukkit.org/projects/worldguard/files/5719698/download"
+wget -O "$PluginsDirectory\BlueMap.jar" "https://cdn.modrinth.com/data/swbUV1cr/versions/KDFOHrSO/bluemap-5.5-paper.jar"
 # FAWE
 $JobUrl = "https://ci.athion.net/job/FastAsyncWorldEdit"
 
